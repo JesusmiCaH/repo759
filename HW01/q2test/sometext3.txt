@@ -1,0 +1,10 @@
+bye world 0
+bye world 1
+bye world 2
+bye world 3
+bye world 4
+bye world 5
+bye world 6
+bye world 7
+bye world 8
+bye world 9
