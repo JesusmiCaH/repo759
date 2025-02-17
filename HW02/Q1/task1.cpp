@@ -2,6 +2,7 @@
 #include <chrono>
 #include "scan.h"
 using namespace std;
+using std::chrono::duration;
 
 int main(int argc, char *argv[]) {
     int n = std::stoi(argv[1])+1;
@@ -17,8 +18,8 @@ int main(int argc, char *argv[]) {
     float *scanned_arr = scan(arr, n);
     auto end_time = std::chrono::steady_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-    cout << duration.count() << endl;
+    auto duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);
+    cout << duration_sec.count() << endl;
     cout << scanned_arr[0] << endl <<  scanned_arr[n] << endl;
 
     free(arr);

@@ -3,6 +3,7 @@
 #include "convolution.h"
 
 using namespace std;
+using std::chrono::duration;
 
 struct Matrix{
     unsigned int height;
@@ -35,8 +36,8 @@ int main(int argc, char *argv[]){
     Matrix output = conv(image, mask);
     auto end_time = std::chrono::steady_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-    cout << duration.count() << endl;
+    auto duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);
+    cout << duration_sec.count() << endl;
     cout << output.MatVals[0] << endl;
     cout << output.MatVals[output.height * output.width - 1] << endl;
 }
