@@ -80,7 +80,7 @@ struct vecMatrix mmul4(struct vecMatrix A, struct vecMatrix B){
     for(int i = 0; i < C.height; i++){
         for(int j = 0; j < C.width; j++){
             for(int k = 0; k < A.width; k++)
-                C.MatVals.at(i*C.width + j) += A.MatVals.at(i*A.width + k) * B.MatVals.at(k*B.width + j);
+                C.MatVals[i*C.width + j] += A.MatVals[i*A.width + k] * B.MatVals[k*B.width + j];
         }
     }
     return C;
