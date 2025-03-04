@@ -31,16 +31,19 @@ int main(int argc, char* argv[]){
 template <typename T>
 void compute_n_timer(T Arr, void (*sort)(T, size_t, size_t), size_t n, size_t threshold){
     auto start_time = std::chrono::steady_clock::now();
-    sort(Arr, n, threshold);
+    #pragma omp parallel
+    {
+	#pragma omp single
+	{
+	     sort(Arr, n, threshold);
+	}
+    }
+
     auto end_time = std::chrono::steady_clock::now();
 
     auto duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);
 
-    // cout << Arr[0] << endl;
-    // cout << Arr[n-1] << endl;
-    for(int i=0; i<n; i++){
-        cout << Arr[i] << endl;
-    }
-    cout<<endl;
+    cout << Arr[0] << endl;
+    cout << Arr[n-1] << endl;
     cout << "Time: " << duration_sec.count() << endl;
     }

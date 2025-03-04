@@ -2,9 +2,13 @@
 #include <chrono>
 #include <omp.h>
 #include "matmul.h"
+#include <random>
 
 using namespace std;
 using std::chrono::duration;
+
+std::mt19937 gen(404);
+std::uniform_real_distribution<float> dist(0,1);
 
 struct Matrix{
     std::size_t height;
@@ -17,9 +21,9 @@ struct Matrix{
         MatVals = (float*)malloc(h * w * sizeof(float));
     }
     void initialize(){
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for(int i = 0; i < height*width; i++){
-            MatVals[i] = (float)rand()/RAND_MAX;
+            MatVals[i] = dist(gen);
         }
         // cout << "finishInit" << MatVals[height * width -1 ] << endl;
     }
@@ -49,7 +53,7 @@ void compute_n_timer(T A, T B, T (*mmul)(T, T)){
     auto end_time = std::chrono::steady_clock::now();
 
     auto duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);
-
-    cout << "Time: " << duration_sec.count() << endl;
+    cout << C.MatVals[0] << endl;
     cout << C.MatVals[C.height * C.width - 1] << endl;
+    cout << duration_sec.count() << endl;
     }

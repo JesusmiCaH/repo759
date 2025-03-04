@@ -5,12 +5,12 @@ void msort(int* arr, const std::size_t n, const std::size_t threshold){
     if(n<=1){
         return;
     }
-    else if(n <= threshold){
-        #pragma omp task
-        msort(arr, n/2, threshold);
-        #pragma omp task
-        msort(arr + n/2, (n-n/2), threshold);
-        #pragma omp taskwait
+    else if(n > threshold){
+	 #pragma omp task shared(arr)
+         msort(arr, n/2, threshold);
+       	 #pragma omp task shared(arr)
+       	 msort(arr + n/2, (n-n/2), threshold);
+       	 #pragma omp taskwait
     }
     else{
         msort(arr, n/2, threshold);

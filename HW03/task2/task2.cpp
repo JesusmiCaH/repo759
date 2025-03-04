@@ -53,5 +53,5 @@ void compute_n_timer(T A, T B, T (*conv)(T, T)){
 
     cout << C.MatVals[0] << endl;
     cout << C.MatVals[C.height * C.width - 1] << endl;
-    cout << "Time: " << duration_sec.count() << endl;
+    cout << duration_sec.count() << endl;
     }
