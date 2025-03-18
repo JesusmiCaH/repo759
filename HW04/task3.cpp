@@ -38,9 +38,8 @@ void getAcc(const double pos[][3], const double mass[], double acc[][3], int N) 
                 double drSquared = dx * dx + dy * dy + dz * dz + softening * softening;
                 double drCubed = drSquared * std::sqrt(drSquared);
                 double inv_r3 = 1.0 / drCubed;
-
                 acc[i][0] += G * mass[j] * dx * inv_r3;
-                acc[i][1] += G * mass[j] * dy * inv_r3;
+		acc[i][1] += G * mass[j] * dy * inv_r3;
 		acc[i][2] += G * mass[j] * dz * inv_r3;
             }
         }
@@ -151,20 +150,11 @@ int main(int argc, char *argv[]) {
     // Number of timesteps
     int Nt = int(tEnd / dt);
 
-    char* schedule = std::getenv("OMP_SCHEDULE");  // 读取 OpenMP 调度方式
-    std::cout << "OMP_SCHEDULE = " << (schedule ? schedule : "not set") << std::endl;
-
-    #pragma omp parallel
-    {
-        #pragma omp single
-        std::cout << "Using " << omp_get_num_threads() << " threads" << std::endl;
-    }
-
     // Main simulation loop
     for (int step = 0; step < Nt; step++) {
         
+	
         // TODO: (1/2) kick
-        #pragma omp parallel for schedule(runtime)
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < 3; j++) {
                 vel[i][j] += 0.5 * acc[i][j] * dt;
@@ -173,18 +163,16 @@ int main(int argc, char *argv[]) {
 
 
         // TODO: Drift
-        #pragma omp parallel for schedule(runtime)
-        for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
             for (int j = 0; j < 3; j++) {
                 pos[i][j] += vel[i][j] * dt;
             }
         }
 
         // TODO: Ensure particles stay within the board limits
-        #pragma omp parallel for schedule(runtime)
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < 3; j++) {
-                if (pos[i][j] < -board_size) 
+                if (pos[i][j] < -board_size)
                     pos[i][j] = -board_size;
                 else if (pos[i][j] > board_size)
                     pos[i][j] = board_size;
@@ -195,8 +183,7 @@ int main(int argc, char *argv[]) {
         getAcc(pos, mass, acc, N);
 
         // TODO: (1/2) kick
-        #pragma omp parallel for schedule(runtime)
-        for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
             for (int j = 0; j < 3; j++) {
                 vel[i][j] += 0.5 * acc[i][j] * dt;
             }
