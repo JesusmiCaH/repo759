@@ -29,8 +29,10 @@ int main(int argc, char* argv[]){
 
 	cudaMemcpy(da, a, n*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(db, b, n*sizeof(float), cudaMemcpyHostToDevice);
+	
+	int thread_num = 16;
 	auto start_time = chrono::steady_clock::now();
-	vscale<<<1, n>>>(da, db, n);
+	vscale<<<(n+thread_num-1)/thread_num, thread_num>>>(da, db, n);
 	cudaDeviceSynchronize();
 	auto end_time = chrono::steady_clock::now();
 
