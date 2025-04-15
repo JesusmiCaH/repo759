@@ -5,7 +5,7 @@
 __global__ void stencil_kernel(const float* image, const float* mask, float* output, unsigned int n, unsigned int R){
     extern __shared__ float shared[];
     float* shared_image = shared;
-    float* shared_mask = shared + blockDim.x;
+    float* shared_mask = shared + blockDim.x + 2*R;
     float* shared_output = shared_mask + (2 * R + 1);
 
     unsigned int tid = threadIdx.x;
@@ -53,8 +53,9 @@ __host__ void stencil(const float* image,
     unsigned int n,
     unsigned int R,
     unsigned int threads_per_block){
-	stencil_kernel<<<(n + threads_per_block - 1) / threads_per_block, threads_per_block, (2 * (R+threads_per_block) + 1) * sizeof(float)>>>(
+	stencil_kernel<<<(n + threads_per_block - 1) / threads_per_block, threads_per_block, (4*R + 2*threads_per_block + 1) * sizeof(float)>>>(
             image, mask, output, n, R
         );
+	cudaDeviceSynchronize();
     }
 

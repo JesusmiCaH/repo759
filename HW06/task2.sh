@@ -14,6 +14,6 @@ nvcc task2.cu stencil.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 
 for((i=9; i<30; i++))
 do
 	echo "n:2^$i"
-	./task2 $((2**i)) 128 16
+	./task2 $((2**i)) 128 1024
 	echo ""
 done
