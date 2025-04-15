@@ -5,7 +5,7 @@
 __global__ void matmul_kernel(const float* A, const float* B, float* C, size_t n)
 {
     // Calculate the row and column index for the element to compute
-    element_idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int element_idx = blockIdx.x * blockDim.x + threadIdx.x;
     int row = element_idx / n;
     int col = element_idx % n;
 

@@ -2,10 +2,14 @@
 #include <cuda.h>
 #include "matmul.cuh"
 #include <chrono>
+#include <random>
+
+using namespace std;
+using std::chrono::duration;
 
 int main(int argc, char* argv[]){
     int n = std::stoi(argv[1]);
-    unsigned int threads_per_block = 256;
+    unsigned int threads_per_block = std::stoi(argv[2]);
 
     float *h_A = new float[n * n];
     float *h_B = new float[n * n];
@@ -33,12 +37,12 @@ int main(int argc, char* argv[]){
     auto start_time = std::chrono::steady_clock::now();
     matmul(d_A, d_B, d_C, n, threads_per_block);
     auto end_time = std::chrono::steady_clock::now();
-    cudaMemcpy(h_C, d_C, n * n * sizeof(float), cudaMemcpyDeviceToHost)
+    cudaMemcpy(h_C, d_C, n * n * sizeof(float), cudaMemcpyDeviceToHost);
 
     auto duration_sec = chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);	
     
-    std::cout << h_C[n*n-1] << std::endl;
-    std::cout << duration_sec << std::endl;
+    cout << h_C[n*n-1] << endl;
+    cout << duration_sec.count() << endl;
 
     cudaFree(d_A);
     cudaFree(d_B);

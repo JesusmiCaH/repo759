@@ -2,11 +2,14 @@
 #include <cuda.h>
 #include "stencil.cuh"
 #include <chrono>
+#include <random>
+using std::chrono::duration;
+using namespace std;
 
 int main(int argc, char* argv[]){
     int n = std::stoi(argv[1]);
     int R = std::stoi(argv[2]);
-    unsigned int threads_per_block = 256;
+    unsigned int threads_per_block = std::stoi(argv[3]);
 
     float* image = new float[n];
     float* mask = new float[2 * R + 1];
@@ -36,7 +39,7 @@ int main(int argc, char* argv[]){
     auto duration_sec = chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);	
     
     std::cout << output[n-1] << std::endl;
-    std::cout << duration_sec << std::endl;
+    std::cout << duration_sec.count() << std::endl;
 
     cudaFree(d_image);
     cudaFree(d_mask);

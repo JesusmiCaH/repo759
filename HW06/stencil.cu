@@ -17,7 +17,7 @@ __global__ void stencil_kernel(const float* image, const float* mask, float* out
         shared_image[tid+R] = image[gid];
         if(tid < R){
             // Load shared_image value between idx = 0:R
-            if(gid - R >= 0) {
+            if(gid >= R) {
                 shared_image[tid] = image[gid - R];
             } else {
                 shared_image[tid] = 0.0f; // Handle boundary condition
@@ -39,9 +39,9 @@ __global__ void stencil_kernel(const float* image, const float* mask, float* out
     // Convolution
     if(gid < n){
         shared_output[tid] = 0.0f;
-        for(int i = -R; i <= R; i++) {
-            shared_output[tid] += shared_image[tid + i + R] * shared_mask[i + R];
-        }
+        for(int i = 0; i <= 2*R; i++) {
+            shared_output[tid] += shared_image[tid + i] * shared_mask[i];
+	}
         output[gid] = shared_output[tid];
     }
 }
@@ -53,7 +53,8 @@ __host__ void stencil(const float* image,
     unsigned int n,
     unsigned int R,
     unsigned int threads_per_block){
-        stencil_kernel<<<(n + threads_per_block - 1) / threads_per_block, threads_per_block, (2 * (R+threads_per_block) + 1) * sizeof(float)>>>(
+	stencil_kernel<<<(n + threads_per_block - 1) / threads_per_block, threads_per_block, (2 * (R+threads_per_block) + 1) * sizeof(float)>>>(
             image, mask, output, n, R
         );
     }
+
