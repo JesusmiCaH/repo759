@@ -11,7 +11,12 @@ template <typename T>
 void randomize(T* A, int n, T min, T max) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<T> dist(min, max);
+    using DistType = std::conditional_t<
+        std::is_integral<T>::value,
+        std::uniform_int_distribution<T>,
+        std::uniform_real_distribution<T>
+        >;
+    DistType dist(min, max);
     for (int i = 0; i < n; i++) {
         A[i] = dist(gen);
     }
