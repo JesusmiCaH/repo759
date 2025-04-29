@@ -5,11 +5,12 @@
 template <typename T>
 __global__ void matmul_kernel(
     const T *A, T *B, T *C, 
-    unsigned int n, unsigned int block_dim
+    unsigned int n
 ) {
-    extern __shared__ T shared[];
-    T *tile_A = shared;
-    T *tile_B = shared + block_dim * block_dim;
+    unsigned block_dim = blockDim.x;
+    extern __shared__ T s_data[];
+    T *tile_A = s_data;
+    T *tile_B = s_data + block_dim * block_dim;
 
     uint round = (n + block_dim - 1) / block_dim;
     uint row = blockIdx.y * block_dim + threadIdx.y;
@@ -47,7 +48,7 @@ __host__ void matmul_1(
     cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
     dim3 block(block_dim, block_dim);
     dim3 grid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    matmul_kernel<int> <<<grid, block>>>(d_A, d_B, d_C, n, block_dim);
+    matmul_kernel<int> <<<grid, block, 2 * block_dim * block_dim * sizeof(int)>>>(d_A, d_B, d_C, n);
     cudaDeviceSynchronize();
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
     cudaFree(d_A);
@@ -68,7 +69,7 @@ __host__ void matmul_2(
     cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
     dim3 block(block_dim, block_dim);
     dim3 grid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    matmul_kernel<float> <<<grid, block>>>(d_A, d_B, d_C, n, block_dim);
+    matmul_kernel<float> <<<grid, block, 2 * block_dim * block_dim * sizeof(float)>>>(d_A, d_B, d_C, n);
     cudaDeviceSynchronize();
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
     cudaFree(d_A);
@@ -89,7 +90,7 @@ __host__ void matmul_3(
     cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
     dim3 block(block_dim, block_dim);
     dim3 grid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    matmul_kernel<double> <<<grid, block>>>(d_A, d_B, d_C, n, block_dim);
+    matmul_kernel<double> <<<grid, block, 2 * block_dim * block_dim * sizeof(double)>>>(d_A, d_B, d_C, n);
     cudaDeviceSynchronize();
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
     cudaFree(d_A);
