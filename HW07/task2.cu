@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cuda.h>
-#include "matmul.cuh"
+#include "reduce.cuh"
 #include <chrono>
 #include <random>
 
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
     cudaMalloc((void**)&d_out, (N+block_dim-1)/block_dim * sizeof(float));
 
     auto start_time = std::chrono::steady_clock::now();
-    reduce(&d_arr, &d_out, N, block_dim);
+    ::reduce(&d_arr, &d_out, N, block_dim);
     auto end_time = std::chrono::steady_clock::now();
     auto duration_sec = chrono::duration_cast<duration<double, std::milli>>(end_time - start_time);
 
