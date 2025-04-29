@@ -8,9 +8,9 @@ __global__ void matmul_kernel(
     unsigned int n
 ) {
     unsigned block_dim = blockDim.x;
-    extern __shared__ T s_data[];
-    T *tile_A = s_data;
-    T *tile_B = s_data + block_dim * block_dim;
+    eextern __shared__ char shared[];
+    T* tile_A = reinterpret_cast<T*>(shared);
+    T *tile_B = shared + block_dim * block_dim;
 
     uint round = (n + block_dim - 1) / block_dim;
     uint row = blockIdx.y * block_dim + threadIdx.y;
