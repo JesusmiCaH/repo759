@@ -36,7 +36,7 @@ template <typename T>
 void compute_n_timer(T A, T B, T (*mmul)(T, T));
 
 int main(){
-    int dim = 1000;
+    int dim = 1024;
     Matrix A(dim, dim);
     Matrix B(dim, dim);
 
